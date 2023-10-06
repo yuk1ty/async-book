@@ -758,6 +758,6 @@ execute_unpin_future(fut); // OK
 
 ## 訳註
 
-[^1]: いきなり`Unpin`という用語が出てきてしまっており混乱したかもしれない。`Pin`というのは要するに「ピン留めされたあとに」ムーブすることは許可しないことを示す。`Unpin`はその逆で、「ピン留めされたあとであっても」ムーブしてもよいことを示す[自動トレイト（auto-traits）](https://doc.rust-lang.org/stable/reference/special-types-and-traits.html#auto-traits)にあたる。ちなみに`!Unpin`「ピン留めされたあとに」ムーブできないことを示す自動トレイトである。
+[^1]: いきなり`Unpin`という用語が出てきてしまっており混乱したかもしれない。`Unpin`は、「ピン留めされたあとであっても」ムーブしてもよいことを示す[自動トレイト（auto-traits）](https://doc.rust-lang.org/stable/reference/special-types-and-traits.html#auto-traits)にあたる。ちなみに`!Unpin`「ピン留めされたあとに」ムーブできないことを示す自動トレイトである。
 
 [^2]: `Poll::Pending`が返る。
