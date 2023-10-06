@@ -26,7 +26,7 @@ Rustの非同期プログラミングへようこそ！Rustで非同期コード
 <!-- when writing async code, and describe best-practices for structuring libraries -->
 <!-- and applications to maximize performance and reusability. -->
 
-- 中ほどの章では、非同期コードを書く際に利用できる主要なユーティリティやコントロールフローのツールについて紹介し、パフォーマンスと再利用性を最大化するためのライブラリやアプリケーションの構造のベストプラクティスについて説明します。
+- 中盤の章では、非同期コードを書く際に利用できる主要なユーティリティやコントロールフローのツールについて紹介し、パフォーマンスと再利用性を最大化するためのライブラリやアプリケーションの構造のベストプラクティスについて説明します。
 
 <!-- - The last section of the book covers the broader async ecosystem, and provides -->
 <!-- a number of examples of how to accomplish common tasks. -->
