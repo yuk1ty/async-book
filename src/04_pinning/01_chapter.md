@@ -15,7 +15,7 @@ Futureをポーリングするためには、`Pin<T>`と呼ばれる特別な型
 <!-- why this is necessary, we need to remember how `async`/`.await` works. Consider -->
 <!-- the following code: -->
 
-`Pin`は`Unpin`マーカーと連動します。ピン留めすることで、`!Unpin`を実装したオブジェクトがムーブされないことを保証できます。なぜこれが必要なのかを理解するためには、`async`/`.await`の仕組みを思い出す必要があります。下記のコードを考えてみましょう：
+`Pin`は`Unpin`マーカー[^1]と連動します。ピン留め（pinning）は、ピン留めすることで`!Unpin`を実装したオブジェクトがムーブされないことを保証できます。なぜこれが必要なのかを理解するためには、`async`/`.await`の仕組みを思い出す必要があります。下記のコードを考えてみましょう：
 
 ```rust,edition2018,ignore
 let fut_one = /* ... */;
@@ -72,7 +72,7 @@ impl Future for AsyncFuture {
 <!-- up where the previous one left off. This process continues until the future -->
 <!-- is able to successfully complete. -->
 
-最初に`poll`が呼び出されると、`fut_one`をポーリングします。`fut_one`がタスクを完了できない場合、`AsyncFuture::poll`は（訳註: `Poll::Pending`を）返します。Futureの`poll`の今後の呼び出しは、前の呼び出しが中断したところから始まります。このプロセスは、Futureが正常に完了するまで続きます。
+最初に`poll`が呼び出されると、`fut_one`をポーリングします。`fut_one`がタスクを完了できない場合、`AsyncFuture::poll`は値を[^2]返します。Futureの`poll`の今後の呼び出しは、前の呼び出しが中断したところから始まります。このプロセスは、Futureが正常に完了するまで続きます。
 
 <!-- However, what happens if we have an `async` block that uses references? -->
 <!-- For example: -->
@@ -372,7 +372,7 @@ fn main() {
 <!-- However, types that can't be moved after they're pinned have a marker called -->
 <!-- `!Unpin`. Futures created by async/await is an example of this. -->
 
-しかし、ピン留めされたあとに移動できない型には、`!Unpin`というマーカーがついています。async/awaitによって作られたFutureはこの例にあたります。
+しかし、ピン留めされたあとにムーブできない型には、`!Unpin`というマーカーがついています。async/awaitによって作られたFutureはこの例にあたります。
 
 <!-- ### Pinning to the Stack -->
 ### スタックへのピン留め
@@ -753,3 +753,11 @@ execute_unpin_future(fut); // OK
 ["Executing `Future`s and Tasks"]: ../02_execution/01_chapter.md
 [the `Future` trait]: ../02_execution/02_future.md
 [pin_utils]: https://docs.rs/pin-utils/
+
+---
+
+## 訳註
+
+[^1]: いきなり`Unpin`という用語が出てきてしまっており混乱したかもしれない。`Pin`というのは要するに「ピン留めされたあとに」ムーブすることは許可しないことを示す。`Unpin`はその逆で、「ピン留めされたあとであっても」ムーブしてもよいことを示す[自動トレイト（auto-traits）](https://doc.rust-lang.org/stable/reference/special-types-and-traits.html#auto-traits)にあたる。ちなみに`!Unpin`「ピン留めされたあとに」ムーブできないことを示す自動トレイトである。
+
+[^2]: `Poll::Pending`が返る。

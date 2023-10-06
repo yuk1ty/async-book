@@ -107,6 +107,12 @@
 <!-- attempt to take the lock and cause a deadlock. To avoid this, use the `Mutex` -->
 <!-- in `futures::lock` rather than the one from `std::sync`. -->
 
-同様に、`.await`の呼び出し中に従来の、Futureを意識しないロックを保持するのはよくありません。スレッドプールがロックされる可能性があるためです。あるタスクがロックを取得して`.await`し、エグゼキュータに委譲すると、別のタスクがロックを取得しようとしてデッドロックを引き起こす可能性があります。これを避けるには、`std::sync`の`Mutex`ではなく、`futures::lock`の`Mutex`を使用します。
+同様に、`.await`の呼び出し中に従来の、Futureを意識しないロックを保持するのはよくありません。スレッドプールがロックされる可能性があるためです。あるタスクがロックを取得して`.await`し、エグゼキュータに委譲すると、別のタスクがロックを取得しようとしてデッドロックを引き起こす可能性があります。これを避けるには、`std::sync`の`Mutex`ではなく、`futures::lock`の`Mutex`を使用します。[^1]
 
 [最初の章]: ../01_getting_started/04_async_await_primer.md
+
+---
+
+## 訳註
+
+[^1]: [tokioのドキュメント](https://zenn.dev/magurotuna/books/tokio-tutorial-ja/viewer/shared_state)にも似たような話が記載されており、あわせて読むと理解が深まるかもしれない。
