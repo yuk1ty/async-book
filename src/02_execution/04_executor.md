@@ -67,39 +67,47 @@ futures = "0.3"
 {{#include ../../examples/02_04_executor/src/lib.rs:executor_decl}}
 ```
 
-Let's also add a method to spawner to make it easy to spawn new futures.
-This method will take a future type, box it, and create a new `Arc<Task>` with
-it inside which can be enqueued onto the executor.
+<!-- Let's also add a method to spawner to make it easy to spawn new futures. -->
+<!-- This method will take a future type, box it, and create a new `Arc<Task>` with -->
+<!-- it inside which can be enqueued onto the executor. -->
+
+新しいFutureを簡単に生成するためのメソッドを「spawner」に追加しましょう。このメソッドはFuture型を受け取り、それをBox化し、新しい`Arc<Task>`を生成します。これは実行プログラムのキューに入れることができます。
 
 ```rust,ignore
 {{#include ../../examples/02_04_executor/src/lib.rs:spawn_fn}}
 ```
 
-To poll futures, we'll need to create a `Waker`.
-As discussed in the [task wakeups section], `Waker`s are responsible
-for scheduling a task to be polled again once `wake` is called. Remember that
-`Waker`s tell the executor exactly which task has become ready, allowing
-them to poll just the futures that are ready to make progress. The easiest way
-to create a new `Waker` is by implementing the `ArcWake` trait and then using
-the `waker_ref` or `.into_waker()` functions to turn an `Arc<impl ArcWake>`
-into a `Waker`. Let's implement `ArcWake` for our tasks to allow them to be
-turned into `Waker`s and awoken:
+<!-- To poll futures, we'll need to create a `Waker`. -->
+<!-- As discussed in the [task wakeups section], `Waker`s are responsible -->
+<!-- for scheduling a task to be polled again once `wake` is called. Remember that -->
+<!-- `Waker`s tell the executor exactly which task has become ready, allowing -->
+<!-- them to poll just the futures that are ready to make progress. The easiest way -->
+<!-- to create a new `Waker` is by implementing the `ArcWake` trait and then using -->
+<!-- the `waker_ref` or `.into_waker()` functions to turn an `Arc<impl ArcWake>` -->
+<!-- into a `Waker`. Let's implement `ArcWake` for our tasks to allow them to be -->
+<!-- turned into `Waker`s and awoken: -->
+
+Futureをポーリングするためには、`Waker`を作る必要があります。[task wakeups section]で議論したように、`Waker`は`wake`が一度呼ばれると再びタスクをポーリングするようスケジューリングする責務を持っています。`Waker`はどのタスクが準備完了になったかを正確にエグゼキュータに伝えるので、進める準備ができたフューチャーだけポーリングできることを覚えておいてください。新しい`Waker`を作成する最も簡単な方法は、`ArcWake`トレイトを実装し、`waker_ref`または`.into_waker()`の関数を使用して`Arc<impl ArcWake>`を`Waker`に変換することです。タスクに`ArcWake`を実装して、それらを`Waker`に変換できるようにし、そしてタスクを起こしましょう：
 
 ```rust,ignore
 {{#include ../../examples/02_04_executor/src/lib.rs:arcwake_for_task}}
 ```
 
-When a `Waker` is created from an `Arc<Task>`, calling `wake()` on it will
-cause a copy of the `Arc` to be sent onto the task channel. Our executor then
-needs to pick up the task and poll it. Let's implement that:
+<!-- When a `Waker` is created from an `Arc<Task>`, calling `wake()` on it will -->
+<!-- cause a copy of the `Arc` to be sent onto the task channel. Our executor then -->
+<!-- needs to pick up the task and poll it. Let's implement that: -->
+
+`Arc<Task>`から`Waker`が生成された時に`wake()`を呼び出すと、`Arc`のコピーがタスクチャネルに送られます。そしてエグゼキュータはタスクを拾ってポーリングする必要があります。それを実装しましょう：
 
 ```rust,ignore
 {{#include ../../examples/02_04_executor/src/lib.rs:executor_run}}
 ```
 
-Congratulations! We now have a working futures executor. We can even use it
-to run `async/.await` code and custom futures, such as the `TimerFuture` we
-wrote earlier:
+<!-- Congratulations! We now have a working futures executor. We can even use it -->
+<!-- to run `async/.await` code and custom futures, such as the `TimerFuture` we -->
+<!-- wrote earlier: -->
+
+おめでとうございます！きちんと動作するフューチャーのエグゼキュータを手に入れられました。`async/.await`コードで動く、前に書いた`TimeFuture`のようなカスタマイズされたFutureを使うことができるようになります：
 
 ```rust,edition2018,ignore
 {{#include ../../examples/02_04_executor/src/lib.rs:main}}
